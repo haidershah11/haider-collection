@@ -19,7 +19,10 @@ const supabase = SUPABASE_ENABLED
   ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
   : null;
 
-fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+// Replace the old fs.mkdirSync line with this:
+if (!process.env.VERCEL) {
+  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+}
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
