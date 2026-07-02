@@ -138,11 +138,7 @@ function checkout() {
             </div>
             
             <div id="payment-instructions" style="background: #fff3cd; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: none;">
-                <p style="margin: 0; font-size: 0.9rem;">
-                    <strong>Payment Instructions:</strong><br>
-                    Send payment to: <strong>0300-1234567</strong> (Benazir Ahmed)<br>
-                    After payment, send screenshot via <a href="https://wa.me/923001234567" target="_blank" style="color: #25d366;">WhatsApp</a>
-                </p>
+                <!-- Content injected dynamically via JavaScript below -->
             </div>
             
             <div style="display: flex; gap: 10px;">
@@ -158,13 +154,30 @@ function checkout() {
     
     document.body.appendChild(modal);
     
-    // Show payment instructions for JazzCash/EasyPaisa
     const paymentSelect = document.getElementById('checkout-payment');
     const paymentInstructions = document.getElementById('payment-instructions');
     
     paymentSelect.addEventListener('change', (e) => {
-        if (e.target.value === 'jazzcash' || e.target.value === 'easypaisa') {
+        const value = e.target.value;
+        
+        if (value === 'jazzcash') {
             paymentInstructions.style.display = 'block';
+            paymentInstructions.innerHTML = `
+                <p style="margin: 0; font-size: 0.9rem;">
+                    <strong>JazzCash Payment Instructions:</strong><br>
+                    Send payment to: <strong>03058917477</strong> (Syed Izan Abbas)<br>
+                    After payment, send screenshot via <a href="https://wa.me/923135591513" target="_blank" style="color: #25d366; font-weight: bold;">WhatsApp</a>
+                </p>
+            `;
+        } else if (value === 'easypaisa') {
+            paymentInstructions.style.display = 'block';
+            paymentInstructions.innerHTML = `
+                <p style="margin: 0; font-size: 0.9rem;">
+                    <strong>EasyPaisa Payment Instructions:</strong><br>
+                    Send payment to: <strong>03135591513</strong> (Syed Izan Abbas)<br>
+                    After payment, send screenshot via <a href="https://wa.me/923135591513" target="_blank" style="color: #25d366; font-weight: bold;">WhatsApp</a>
+                </p>
+            `;
         } else {
             paymentInstructions.style.display = 'none';
         }
@@ -185,7 +198,6 @@ function confirmCheckout() {
     const cart = getCart();
     const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     
-    // Send order to server
     fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -199,13 +211,8 @@ function confirmCheckout() {
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            // Clear cart
             localStorage.removeItem('cart');
-            
-            // Show success message
             alert(`Order placed successfully! Order ID: ${data.order.id}\n\nWe will contact you soon to confirm your order.`);
-            
-            // Redirect to home
             window.location.href = '/';
         } else {
             alert('Error placing order. Please try again.');
