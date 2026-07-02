@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Haider Collection</title>
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>Haider Collection Admin</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" onclick="showSection('products')">
+                    <i class="fas fa-box"></i> Products
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('orders')">
+                    <i class="fas fa-shopping-cart"></i> Orders
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('add-product')">
+                    <i class="fas fa-plus"></i> Add Product
+                </a>
+                <a href="/" class="nav-item">
+                    <i class="fas fa-home"></i> View Store
+                </a>
+                <a href="#" class="nav-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <h1 id="page-title">Products</h1>
+            </header>
+
+            <div class="content-area">
+                <!-- Products List Section -->
+                <section id="products-section" class="section">
+                    <div class="section-header">
+                        <h2>All Products</h2>
+                        <button class="btn-primary" onclick="showSection('add-product')">
+                            <i class="fas fa-plus"></i> Add New Product
+                        </button>
+                    </div>
+                    <div class="products-grid" id="products-list"></div>
+                </section>
+
+                <!-- Orders Section -->
+                <section id="orders-section" class="section" style="display: none;">
+                    <div class="section-header">
+                        <h2>All Orders</h2>
+                        <button class="btn-primary" onclick="loadOrders()">
+                            <i class="fas fa-sync"></i> Refresh
+                        </button>
+                    </div>
+                    <div id="orders-stats" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px;">
+                        <div style="background: #4caf50; color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                            <h3 id="total-orders" style="font-size: 2rem; margin-bottom: 5px;">0</h3>
+                            <p>Total Orders</p>
+                        </div>
+                        <div style="background: #ff9800; color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                            <h3 id="pending-orders" style="font-size: 2rem; margin-bottom: 5px;">0</h3>
+                            <p>Pending</p>
+                        </div>
+                        <div style="background: #2196f3; color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                            <h3 id="completed-orders" style="font-size: 2rem; margin-bottom: 5px;">0</h3>
+                            <p>Completed</p>
+                        </div>
+                        <div style="background: #8b7355; color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                            <h3 id="total-revenue" style="font-size: 2rem; margin-bottom: 5px;">$0</h3>
+                            <p>Total Revenue</p>
+                        </div>
+                    </div>
+                    <div id="orders-list"></div>
+                </section>
+
+                <!-- Add/Edit Product Section -->
+                <section id="add-product-section" class="section" style="display: none;">
+                    <div class="section-header">
+                        <h2 id="form-title">Add New Product</h2>
+                    </div>
+                    <form id="product-form" class="product-form" enctype="multipart/form-data">
+                        <input type="hidden" id="product-id">
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Product Name *</label>
+                                <input type="text" id="product-name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Category *</label>
+                                <select id="product-category" required>
+                                    <option value="">Select Category</option>
+                                    <option value="Dresses">Dresses</option>
+                                    <option value="Tops">Tops</option>
+                                    <option value="Pants">Pants</option>
+                                    <option value="Skirts">Skirts</option>
+                                    <option value="Suits">Suits</option>
+                                    <option value="Sweaters">Sweaters</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Price ($) *</label>
+                                <input type="number" id="product-price" step="0.01" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                    <label>Product Images *</label>
+                                    <input type="file" id="product-images" accept="image/*" multiple>
+                                    <small style="display: block; margin-top: 8px; color: #666;">Select one or more images. The first image becomes the main product image.</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description *</label>
+                            <textarea id="product-description" rows="4" required></textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Sizes (comma-separated)</label>
+                                <input type="text" id="product-sizes" placeholder="XS, S, M, L, XL">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Colors (comma-separated)</label>
+                                <input type="text" id="product-colors" placeholder="Black, White, Red">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="product-featured">
+                                    Featured Product
+                                </label>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="product-instock" checked>
+                                    In Stock
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">Save Product</button>
+                            <button type="button" class="btn-secondary" onclick="cancelEdit()">Cancel</button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/admin.js"></script>
+</body>
+</html>
