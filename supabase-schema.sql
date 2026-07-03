@@ -3,6 +3,7 @@ create table if not exists products (
   name text not null,
   category text not null,
   price numeric(10,2) not null default 0,
+  original_price numeric(10,2),
   description text not null,
   image text not null,
   images jsonb not null default '[]'::jsonb,
@@ -23,8 +24,15 @@ create table if not exists orders (
   total numeric(10,2) not null default 0
 );
 
+create table if not exists settings (
+  key text primary key,
+  value jsonb not null default '{}'::jsonb,
+  updated_at timestamptz not null default now()
+);
+
 alter table products enable row level security;
 alter table orders enable row level security;
+alter table settings enable row level security;
 
 do $$
 begin
@@ -58,6 +66,23 @@ begin
   ) then
     create policy "Allow service role manage orders"
       on orders for all
+      using (auth.role() = 'service_role')
+      with check (auth.role() = 'service_role');
+  end if;
+
+  if not exists (
+    select 1 from pg_policies where schemaname = 'public' and tablename = 'settings' and policyname = 'Allow public read settings'
+  ) then
+    create policy "Allow public read settings"
+      on settings for select
+      using (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies where schemaname = 'public' and tablename = 'settings' and policyname = 'Allow service role manage settings'
+  ) then
+    create policy "Allow service role manage settings"
+      on settings for all
       using (auth.role() = 'service_role')
       with check (auth.role() = 'service_role');
   end if;
