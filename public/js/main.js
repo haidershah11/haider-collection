@@ -16,6 +16,8 @@ async function loadProducts() {
     try {
         const response = await fetch('/api/products');
         const products = await response.json();
+        console.log('Loaded products:', products); // Debug log
+        console.log('First product originalPrice:', products[0]?.originalPrice); // Debug log
         productCatalog = Array.isArray(products) ? products : [];
         displayProducts(productCatalog);
         displayFeaturedProducts(productCatalog.filter(product => product.featured));

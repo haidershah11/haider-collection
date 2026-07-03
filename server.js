@@ -76,12 +76,22 @@ function normalizeProduct(product) {
   const images = safeList(product.images, []);
   const primaryImage = product.image || images[0] || '/images/products/default.jpg';
 
+  // Handle originalPrice - convert to number or null
+  let originalPrice = null;
+  if (product.originalPrice !== undefined && product.originalPrice !== null && product.originalPrice !== '') {
+    originalPrice = toNumber(product.originalPrice);
+    // If originalPrice is 0 or less than price, treat as no discount
+    if (originalPrice <= 0) {
+      originalPrice = null;
+    }
+  }
+
   return {
     id: String(product.id),
     name: product.name || '',
     category: product.category || '',
     price: toNumber(product.price),
-    originalPrice: product.originalPrice !== undefined ? toNumber(product.originalPrice) : null,
+    originalPrice: originalPrice,
     description: product.description || '',
     image: primaryImage,
     images: images.length ? images : [primaryImage],
