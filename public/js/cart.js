@@ -107,45 +107,47 @@ function checkout() {
         align-items: center;
         justify-content: center;
         z-index: 10000;
+        overflow-y: auto;
+        padding: 20px;
     `;
     
     modal.innerHTML = `
-        <div style="background: white; padding: 40px; border-radius: 10px; max-width: 600px; width: 90%;">
-            <h2 style="font-family: 'Playfair Display', serif; margin-bottom: 20px;">Complete Your Order</h2>
+        <div style="background: white; padding: 40px; border-radius: 10px; max-width: 600px; width: 100%; margin: auto;">
+            <h2 style="font-family: 'Playfair Display', serif; margin-bottom: 20px; font-size: 1.8rem;">Complete Your Order</h2>
             
             <div style="margin-bottom: 20px;">
                 <label style="display: block; margin-bottom: 5px; font-weight: 600;">Full Name</label>
-                <input type="text" id="checkout-name" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <input type="text" id="checkout-name" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
             </div>
             
             <div style="margin-bottom: 20px;">
                 <label style="display: block; margin-bottom: 5px; font-weight: 600;">Phone Number</label>
-                <input type="tel" id="checkout-phone" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <input type="tel" id="checkout-phone" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
             </div>
             
             <div style="margin-bottom: 20px;">
                 <label style="display: block; margin-bottom: 5px; font-weight: 600;">Delivery Address</label>
-                <textarea id="checkout-address" rows="3" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></textarea>
+                <textarea id="checkout-address" rows="3" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem; resize: vertical;"></textarea>
             </div>
             
             <div style="margin-bottom: 20px;">
                 <label style="display: block; margin-bottom: 5px; font-weight: 600;">Payment Method</label>
-                <select id="checkout-payment" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <select id="checkout-payment" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
                     <option value="cod">Cash on Delivery (COD)</option>
                     <option value="jazzcash">JazzCash</option>
                     <option value="easypaisa">EasyPaisa</option>
                 </select>
             </div>
             
-            <div id="payment-instructions" style="background: #fff3cd; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: none;">
+            <div id="payment-instructions" style="background: #fff3cd; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: none; font-size: 0.95rem;">
                 <!-- Content injected dynamically via JavaScript below -->
             </div>
             
-            <div style="display: flex; gap: 10px;">
-                <button onclick="confirmCheckout()" style="flex: 1; padding: 12px; background: #8b7355; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button onclick="confirmCheckout()" style="flex: 1; min-width: 140px; padding: 12px; background: #8b7355; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; font-weight: 600;">
                     Place Order
                 </button>
-                <button onclick="this.closest('div').parentElement.parentElement.remove()" style="flex: 1; padding: 12px; background: #ddd; border: none; border-radius: 5px; cursor: pointer;">
+                <button onclick="this.closest('div').parentElement.parentElement.remove()" style="flex: 1; min-width: 140px; padding: 12px; background: #ddd; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; font-weight: 600;">
                     Cancel
                 </button>
             </div>

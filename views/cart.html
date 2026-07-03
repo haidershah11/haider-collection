@@ -89,6 +89,107 @@
             color: #ddd;
             margin-bottom: 20px;
         }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .cart-container {
+                margin: 30px auto;
+                padding: 0 15px;
+            }
+
+            .cart-container h1 {
+                font-size: 2rem;
+                margin-bottom: 20px;
+            }
+
+            .cart-item {
+                grid-template-columns: 100px 1fr;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .cart-item img {
+                height: 120px;
+            }
+
+            .item-details h3 {
+                font-size: 1.1rem;
+            }
+
+            .item-details p {
+                font-size: 0.9rem;
+            }
+
+            .quantity-controls {
+                margin-top: 10px;
+                justify-content: flex-start;
+            }
+
+            .cart-item > div:last-child {
+                grid-column: 1 / -1;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 10px;
+                padding-top: 10px;
+                border-top: 1px solid #eee;
+            }
+
+            .cart-summary {
+                padding: 20px;
+            }
+
+            .summary-row {
+                font-size: 1rem;
+            }
+
+            .summary-row.total {
+                font-size: 1.3rem;
+            }
+
+            .checkout-btn {
+                padding: 12px;
+                font-size: 1rem;
+            }
+
+            .empty-cart {
+                padding: 60px 20px;
+            }
+
+            .empty-cart i {
+                font-size: 4rem;
+            }
+
+            .empty-cart h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cart-container h1 {
+                font-size: 1.7rem;
+            }
+
+            .cart-item {
+                grid-template-columns: 80px 1fr;
+                gap: 12px;
+                padding: 12px;
+            }
+
+            .cart-item img {
+                height: 100px;
+            }
+
+            .item-details h3 {
+                font-size: 1rem;
+            }
+
+            .quantity-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 0.9rem;
+            }
+        }
     </style>
 </head>
 <body>

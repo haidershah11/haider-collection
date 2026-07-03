@@ -9,6 +9,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const PRODUCTS_FILE = path.join(__dirname, 'products.json');
 const ORDERS_FILE = path.join(__dirname, 'orders.json');
+const SETTINGS_FILE = path.join(__dirname, 'settings.json');
 const UPLOAD_DIR = path.join(__dirname, 'public', 'uploads');
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -80,6 +81,7 @@ function normalizeProduct(product) {
     name: product.name || '',
     category: product.category || '',
     price: toNumber(product.price),
+    originalPrice: product.originalPrice !== undefined ? toNumber(product.originalPrice) : null,
     description: product.description || '',
     image: primaryImage,
     images: images.length ? images : [primaryImage],
@@ -128,7 +130,10 @@ async function loadProducts() {
       throw error;
     }
 
-    return (data || []).map(normalizeProduct);
+    return (data || []).map(row => normalizeProduct({
+      ...row,
+      originalPrice: row.original_price
+    }));
   }
 
   const products = await readJson(PRODUCTS_FILE, []);
@@ -147,7 +152,10 @@ async function loadProductById(id) {
       throw error;
     }
 
-    return data ? normalizeProduct(data) : null;
+    return data ? normalizeProduct({
+      ...data,
+      originalPrice: data.original_price
+    }) : null;
   }
 
   const products = await readJson(PRODUCTS_FILE, []);
@@ -247,6 +255,7 @@ function buildProductPayload(body, existingProduct = null, imageUrls = []) {
     name: body.name || existingProduct?.name || '',
     category: body.category || existingProduct?.category || '',
     price: body.price !== undefined ? toNumber(body.price) : existingProduct?.price || 0,
+    originalPrice: body.originalPrice !== undefined && body.originalPrice !== '' ? toNumber(body.originalPrice) : existingProduct?.originalPrice || null,
     description: body.description || existingProduct?.description || '',
     image: images[0],
     images,
@@ -265,6 +274,7 @@ async function saveProduct(product) {
       name: product.name,
       category: product.category,
       price: product.price,
+      original_price: product.originalPrice,
       description: product.description,
       image: product.image,
       images: product.images,
@@ -386,6 +396,41 @@ async function updateOrderStatus(id, status) {
   orders[orderIndex].status = status;
   await writeJson(ORDERS_FILE, orders);
   return orders[orderIndex];
+}
+
+async function loadSettings() {
+  if (SUPABASE_ENABLED) {
+    const { data, error } = await supabase
+      .from('settings')
+      .select('*')
+      .eq('key', 'site_settings')
+      .maybeSingle();
+
+    if (error && error.code !== 'PGRST116') {
+      throw error;
+    }
+
+    return data?.value || {};
+  }
+
+  return await readJson(SETTINGS_FILE, {});
+}
+
+async function saveSettings(settings) {
+  if (SUPABASE_ENABLED) {
+    const { error } = await supabase
+      .from('settings')
+      .upsert([{ key: 'site_settings', value: settings }]);
+    
+    if (error) {
+      throw error;
+    }
+
+    return settings;
+  }
+
+  await writeJson(SETTINGS_FILE, settings);
+  return settings;
 }
 
 app.get('/', (req, res) => {
@@ -541,6 +586,54 @@ app.get('/admin', (req, res) => {
 
 app.get('/admin/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'admin', 'dashboard.html'));
+});
+
+// Get hero image setting
+app.get('/api/admin/settings/hero-image', async (req, res) => {
+  try {
+    const settings = await loadSettings();
+    res.json({ 
+      success: true, 
+      heroImage: settings.heroImage || 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1600&h=900&fit=crop'
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error loading settings' });
+  }
+});
+
+// Upload hero image
+app.post('/api/admin/settings/hero-image', upload.single('heroImage'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'No image file provided' });
+    }
+
+    const uploadedUrls = await uploadFiles([req.file], 'hero');
+    
+    if (uploadedUrls.length === 0) {
+      return res.status(500).json({ success: false, message: 'Failed to upload image' });
+    }
+
+    const settings = await loadSettings();
+    const oldHeroImage = settings.heroImage;
+
+    settings.heroImage = uploadedUrls[0];
+    await saveSettings(settings);
+
+    // Delete old hero image if it exists and is not the default
+    if (oldHeroImage && !oldHeroImage.includes('unsplash.com')) {
+      await deleteStoredFiles([oldHeroImage]);
+    }
+
+    res.json({ 
+      success: true, 
+      heroImage: settings.heroImage,
+      message: 'Hero image updated successfully'
+    });
+  } catch (error) {
+    console.error('Error uploading hero image:', error);
+    res.status(500).json({ success: false, message: error.message || 'Error uploading hero image' });
+  }
 });
 
 app.listen(PORT, () => {

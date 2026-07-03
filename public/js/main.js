@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCartCount();
     setupProductModal();
     bindProductGridEvents();
+    setupMobileMenu();
+    loadHeroImage();
 });
 
 // Load products from API
@@ -27,21 +29,31 @@ function displayProducts(products) {
     const container = document.getElementById('products-container');
     if (!container) return;
     
-    container.innerHTML = products.map(product => `
+    container.innerHTML = products.map(product => {
+        const hasDiscount = product.originalPrice && product.originalPrice > product.price;
+        const priceHTML = hasDiscount 
+            ? `<div class="product-price">
+                <span style="text-decoration: line-through; color: #999; font-size: 1.1rem; margin-right: 8px;">$${product.originalPrice.toFixed(2)}</span>
+                <span style="color: #d32f2f; font-weight: 700;">$${product.price.toFixed(2)}</span>
+               </div>`
+            : `<div class="product-price">$${product.price.toFixed(2)}</div>`;
+        
+        return `
         <article class="product-card product-card--clickable" data-product-id="${product.id}" tabindex="0" role="button" aria-label="Open details for ${product.name}">
             <img src="${getPrimaryImage(product)}" alt="${product.name}" class="product-image" onerror="this.src='https://via.placeholder.com/400x500?text=${encodeURIComponent(product.name)}'">
             <div class="product-info">
                 <div class="product-category">${product.category}</div>
                 <h3 class="product-name">${product.name}</h3>
                 <p class="product-description">${product.description}</p>
-                <div class="product-price">$${product.price.toFixed(2)}</div>
+                ${priceHTML}
                 <div class="product-actions">
                     <button class="btn-secondary-outline" type="button" data-open-product="${product.id}">View Details</button>
                     <button class="btn-add-cart" type="button" data-add-to-cart="${product.id}">Add to Cart</button>
                 </div>
             </div>
         </article>
-    `).join('');
+    `;
+    }).join('');
 }
 
 function displayFeaturedProducts(products) {
@@ -53,21 +65,31 @@ function displayFeaturedProducts(products) {
         return;
     }
 
-    container.innerHTML = products.slice(0, 4).map(product => `
+    container.innerHTML = products.slice(0, 4).map(product => {
+        const hasDiscount = product.originalPrice && product.originalPrice > product.price;
+        const priceHTML = hasDiscount 
+            ? `<div class="product-price">
+                <span style="text-decoration: line-through; color: #999; font-size: 1.1rem; margin-right: 8px;">$${product.originalPrice.toFixed(2)}</span>
+                <span style="color: #d32f2f; font-weight: 700;">$${product.price.toFixed(2)}</span>
+               </div>`
+            : `<div class="product-price">$${product.price.toFixed(2)}</div>`;
+        
+        return `
         <article class="featured-product-card product-card--clickable" data-product-id="${product.id}" tabindex="0" role="button" aria-label="Open details for ${product.name}">
             <img src="${getPrimaryImage(product)}" alt="${product.name}" class="product-image" onerror="this.src='https://via.placeholder.com/400x500?text=${encodeURIComponent(product.name)}'">
             <div class="product-info">
                 <div class="product-category">${product.category}</div>
                 <h3 class="product-name">${product.name}</h3>
                 <p class="product-description">${product.description}</p>
-                <div class="product-price">$${product.price.toFixed(2)}</div>
+                ${priceHTML}
                 <div class="product-actions">
                     <button class="btn-secondary-outline" type="button" data-open-product="${product.id}">View Details</button>
                     <button class="btn-add-cart" type="button" data-add-to-cart="${product.id}">Add to Cart</button>
                 </div>
             </div>
         </article>
-    `).join('');
+    `;
+    }).join('');
 }
 
 function bindProductGridEvents() {
@@ -183,11 +205,22 @@ function showProductModal(product) {
     }
 
     const images = Array.isArray(product.images) && product.images.length > 0 ? product.images : [getPrimaryImage(product)];
+    const hasDiscount = product.originalPrice && product.originalPrice > product.price;
 
     activeProductId = product.id;
     category.textContent = product.category;
     title.textContent = product.name;
-    price.textContent = `$${product.price.toFixed(2)}`;
+    
+    // Display price with discount if applicable
+    if (hasDiscount) {
+        price.innerHTML = `
+            <span style="text-decoration: line-through; color: #999; font-size: 1.5rem; margin-right: 10px;">$${product.originalPrice.toFixed(2)}</span>
+            <span style="color: #d32f2f;">$${product.price.toFixed(2)}</span>
+        `;
+    } else {
+        price.textContent = `$${product.price.toFixed(2)}`;
+    }
+    
     description.textContent = product.description;
     mainImage.src = images[0];
     mainImage.alt = product.name;
@@ -289,4 +322,64 @@ function showNotification(message, type = 'success') {
         notification.style.animation = 'slideOutRight 0.3s ease-out';
         setTimeout(() => notification.remove(), 300);
     }, 3000);
+}
+
+function setupMobileMenu() {
+    const menuBtn = document.querySelector('.mobile-menu-btn');
+    const nav = document.querySelector('.nav');
+    
+    if (!menuBtn || !nav) return;
+    
+    menuBtn.addEventListener('click', () => {
+        nav.classList.toggle('active');
+        const icon = menuBtn.querySelector('i');
+        if (nav.classList.contains('active')) {
+            icon.className = 'fas fa-times';
+        } else {
+            icon.className = 'fas fa-bars';
+        }
+    });
+    
+    // Close menu when clicking on a link
+    nav.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            nav.classList.remove('active');
+            const icon = menuBtn.querySelector('i');
+            icon.className = 'fas fa-bars';
+        });
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!nav.contains(e.target) && !menuBtn.contains(e.target) && nav.classList.contains('active')) {
+            nav.classList.remove('active');
+            const icon = menuBtn.querySelector('i');
+            icon.className = 'fas fa-bars';
+        }
+    });
+}
+
+// Load hero image
+async function loadHeroImage() {
+    try {
+        const response = await fetch('/api/admin/settings/hero-image');
+        const data = await response.json();
+        
+        if (data.success && data.heroImage) {
+            const heroMedia = document.querySelector('.hero-media img');
+            if (heroMedia) {
+                heroMedia.src = data.heroImage;
+                heroMedia.onerror = function() {
+                    this.src = 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1600&h=900&fit=crop';
+                };
+            }
+        }
+    } catch (error) {
+        console.error('Error loading hero image:', error);
+        // Fallback to default image
+        const heroMedia = document.querySelector('.hero-media img');
+        if (heroMedia) {
+            heroMedia.src = 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1600&h=900&fit=crop';
+        }
+    }
 }

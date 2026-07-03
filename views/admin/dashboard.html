@@ -10,7 +10,10 @@
 </head>
 <body>
     <div class="dashboard">
-        <aside class="sidebar">
+        <!-- Mobile Overlay -->
+        <div class="mobile-overlay" id="mobile-overlay"></div>
+        
+        <aside class="sidebar" id="sidebar">
             <div class="logo">
                 <h2>Haider Collection Admin</h2>
             </div>
@@ -20,6 +23,9 @@
                 </a>
                 <a href="#" class="nav-item" onclick="showSection('orders')">
                     <i class="fas fa-shopping-cart"></i> Orders
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('settings')">
+                    <i class="fas fa-cog"></i> Site Settings
                 </a>
                 <a href="#" class="nav-item" onclick="showSection('add-product')">
                     <i class="fas fa-plus"></i> Add Product
@@ -35,6 +41,9 @@
 
         <main class="main-content">
             <header class="top-bar">
+                <button class="menu-toggle" id="menu-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <h1 id="page-title">Products</h1>
             </header>
 
@@ -79,6 +88,50 @@
                     <div id="orders-list"></div>
                 </section>
 
+                <!-- Site Settings Section -->
+                <section id="settings-section" class="section" style="display: none;">
+                    <div class="section-header">
+                        <h2>Site Settings</h2>
+                    </div>
+                    
+                    <div style="max-width: 800px;">
+                        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 20px; color: #2c2c2c;">
+                            <i class="fas fa-image"></i> Hero Section Background Image
+                        </h3>
+                        
+                        <div id="current-hero-preview" style="margin-bottom: 25px;">
+                            <p style="font-weight: 600; margin-bottom: 10px;">Current Hero Image:</p>
+                            <img id="hero-preview-img" src="" alt="Current hero image" style="max-width: 100%; height: 300px; object-fit: cover; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        </div>
+                        
+                        <form id="hero-image-form" style="background: #f8f6f3; padding: 25px; border-radius: 10px;">
+                            <div class="form-group">
+                                <label><i class="fas fa-upload"></i> Upload New Hero Image</label>
+                                <input type="file" id="hero-image-input" accept="image/*" style="padding: 12px; border: 2px dashed #8b7355; background: white;">
+                                <small style="display: block; margin-top: 8px; color: #666;">
+                                    Recommended size: 1600x900px or larger. Formats: JPG, PNG, WebP
+                                </small>
+                            </div>
+                            
+                            <div id="new-hero-preview" style="display: none; margin-top: 20px;">
+                                <p style="font-weight: 600; margin-bottom: 10px;">Preview:</p>
+                                <img id="new-hero-preview-img" src="" alt="Preview" style="max-width: 100%; height: 250px; object-fit: cover; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                            </div>
+                            
+                            <div style="margin-top: 25px; display: flex; gap: 10px; flex-wrap: wrap;">
+                                <button type="submit" class="btn-primary" style="flex: 1; min-width: 150px;">
+                                    <i class="fas fa-save"></i> Save Hero Image
+                                </button>
+                                <button type="button" class="btn-secondary" onclick="cancelHeroUpload()" style="flex: 1; min-width: 150px;">
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <div id="hero-upload-message" style="margin-top: 20px; padding: 15px; border-radius: 8px; display: none;"></div>
+                    </div>
+                </section>
+
                 <!-- Add/Edit Product Section -->
                 <section id="add-product-section" class="section" style="display: none;">
                     <div class="section-header">
@@ -113,6 +166,16 @@
                                 <input type="number" id="product-price" step="0.01" required>
                             </div>
                             
+                            <div class="form-group">
+                                <label>Original Price ($) - Optional</label>
+                                <input type="number" id="product-original-price" step="0.01" placeholder="Leave empty if no discount">
+                                <small style="display: block; margin-top: 5px; color: #666;">
+                                    If set, this will show as strikethrough price to indicate discount
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
                             <div class="form-group">
                                     <label>Product Images *</label>
                                     <input type="file" id="product-images" accept="image/*" multiple>
