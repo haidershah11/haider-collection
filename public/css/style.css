@@ -326,10 +326,12 @@ body {
     color: var(--white);
     border: none;
     border-radius: 5px;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
     transition: background 0.3s;
+    white-space: nowrap;
+    text-align: center;
 }
 
 .btn-add-cart:hover {
@@ -343,10 +345,12 @@ body {
     color: var(--secondary-color);
     border: 1px solid rgba(44, 44, 44, 0.16);
     border-radius: 5px;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s;
+    white-space: nowrap;
+    text-align: center;
 }
 
 .btn-secondary-outline:hover {
@@ -358,12 +362,15 @@ body {
     display: flex;
     gap: 10px;
     flex-direction: row;
+    flex-wrap: nowrap;
+    width: 100%;
 }
 
 .product-actions .btn-secondary-outline,
 .product-actions .btn-add-cart {
-    flex: 1;
-    min-width: 120px;
+    flex: 1 1 0;
+    min-width: 0;
+    white-space: nowrap;
 }
 
 .featured-slider {
@@ -922,6 +929,7 @@ body {
 
     .product-actions {
         flex-direction: column;
+        gap: 10px;
     }
 
     .btn-add-cart,
