@@ -357,6 +357,13 @@ body {
 .product-actions {
     display: flex;
     gap: 10px;
+    flex-direction: row;
+}
+
+.product-actions .btn-secondary-outline,
+.product-actions .btn-add-cart {
+    flex: 1;
+    min-width: 120px;
 }
 
 .featured-slider {

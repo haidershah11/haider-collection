@@ -649,3 +649,8 @@ app.post('/api/admin/settings/hero-image', upload.single('heroImage'), async (re
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+// 404 handler - must be last
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+});

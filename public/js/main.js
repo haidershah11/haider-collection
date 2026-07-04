@@ -44,7 +44,7 @@ function displayProducts(products) {
             <div class="product-info">
                 <div class="product-category">${product.category}</div>
                 <h3 class="product-name">${product.name}</h3>
-                <p class="product-description">${product.description}</p>
+                <p class="product-description">${parseWhatsAppFormatting(product.description)}</p>
                 ${priceHTML}
                 <div class="product-actions">
                     <button class="btn-secondary-outline" type="button" data-open-product="${product.id}">View Details</button>
@@ -80,7 +80,7 @@ function displayFeaturedProducts(products) {
             <div class="product-info">
                 <div class="product-category">${product.category}</div>
                 <h3 class="product-name">${product.name}</h3>
-                <p class="product-description">${product.description}</p>
+                <p class="product-description">${parseWhatsAppFormatting(product.description)}</p>
                 ${priceHTML}
                 <div class="product-actions">
                     <button class="btn-secondary-outline" type="button" data-open-product="${product.id}">View Details</button>
@@ -138,6 +138,19 @@ function getPrimaryImage(product) {
     }
 
     return product.image || 'https://via.placeholder.com/400x500?text=Product';
+}
+
+// Parse WhatsApp-style formatting
+function parseWhatsAppFormatting(text) {
+    if (!text) return '';
+    
+    // Convert **text** to <strong>text</strong> (bold)
+    text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    
+    // Convert newlines to <br> tags
+    text = text.replace(/\n/g, '<br>');
+    
+    return text;
 }
 
 function getProductById(productId) {
@@ -221,7 +234,7 @@ function showProductModal(product) {
         price.textContent = `$${product.price.toFixed(2)}`;
     }
     
-    description.textContent = product.description;
+    description.innerHTML = parseWhatsAppFormatting(product.description);
     mainImage.src = images[0];
     mainImage.alt = product.name;
 
