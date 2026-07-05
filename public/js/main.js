@@ -33,10 +33,10 @@ function displayProducts(products) {
         const hasDiscount = product.originalPrice && product.originalPrice > product.price;
         const priceHTML = hasDiscount 
             ? `<div class="product-price">
-                <span style="text-decoration: line-through; color: #999; font-size: 1.1rem; margin-right: 8px;">$${product.originalPrice.toFixed(2)}</span>
-                <span style="color: #d32f2f; font-weight: 700;">$${product.price.toFixed(2)}</span>
+                <span style="text-decoration: line-through; color: #999; font-size: 1.1rem; margin-right: 8px;">PKR ${product.originalPrice.toFixed(2)}</span>
+                <span style="color: #d32f2f; font-weight: 700;">PKR ${product.price.toFixed(2)}</span>
                </div>`
-            : `<div class="product-price">$${product.price.toFixed(2)}</div>`;
+            : `<div class="product-price">PKR ${product.price.toFixed(2)}</div>`;
         
         return `
         <article class="product-card product-card--clickable" data-product-id="${product.id}" tabindex="0" role="button" aria-label="Open details for ${product.name}">
@@ -69,10 +69,10 @@ function displayFeaturedProducts(products) {
         const hasDiscount = product.originalPrice && product.originalPrice > product.price;
         const priceHTML = hasDiscount 
             ? `<div class="product-price">
-                <span style="text-decoration: line-through; color: #999; font-size: 1.1rem; margin-right: 8px;">$${product.originalPrice.toFixed(2)}</span>
-                <span style="color: #d32f2f; font-weight: 700;">$${product.price.toFixed(2)}</span>
+                <span style="text-decoration: line-through; color: #999; font-size: 1.1rem; margin-right: 8px;">PKR ${product.originalPrice.toFixed(2)}</span>
+                <span style="color: #d32f2f; font-weight: 700;">PKR ${product.price.toFixed(2)}</span>
                </div>`
-            : `<div class="product-price">$${product.price.toFixed(2)}</div>`;
+            : `<div class="product-price">PKR ${product.price.toFixed(2)}</div>`;
         
         return `
         <article class="featured-product-card product-card--clickable" data-product-id="${product.id}" tabindex="0" role="button" aria-label="Open details for ${product.name}">
@@ -227,11 +227,11 @@ function showProductModal(product) {
     // Display price with discount if applicable
     if (hasDiscount) {
         price.innerHTML = `
-            <span style="text-decoration: line-through; color: #999; font-size: 1.5rem; margin-right: 10px;">$${product.originalPrice.toFixed(2)}</span>
-            <span style="color: #d32f2f;">$${product.price.toFixed(2)}</span>
+            <span style="text-decoration: line-through; color: #999; font-size: 1.5rem; margin-right: 10px;">PKR ${product.originalPrice.toFixed(2)}</span>
+            <span style="color: #d32f2f;">PKR ${product.price.toFixed(2)}</span>
         `;
     } else {
-        price.textContent = `$${product.price.toFixed(2)}`;
+        price.textContent = `PKR ${product.price.toFixed(2)}`;
     }
     
     description.innerHTML = parseWhatsAppFormatting(product.description);
