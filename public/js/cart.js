@@ -41,7 +41,7 @@ function displayCart() {
                 <div class="item-details">
                     <h3>${item.name}</h3>
                     <p>${item.category}</p>
-                    <p style="color: var(--primary-color); font-weight: 600;">$${item.price.toFixed(2)}</p>
+                    <p style="color: var(--primary-color); font-weight: 600;">PKR ${item.price.toFixed(2)}</p>
                 </div>
                 <div class="quantity-controls">
                     <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">-</button>
@@ -49,7 +49,7 @@ function displayCart() {
                     <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
                 </div>
                 <div>
-                    <p style="font-weight: 600; font-size: 1.2rem;">$${(item.price * item.quantity).toFixed(2)}</p>
+                    <p style="font-weight: 600; font-size: 1.2rem;">PKR ${(item.price * item.quantity).toFixed(2)}</p>
                     <button onclick="removeItem(${index})" style="color: #d32f2f; background: none; border: none; cursor: pointer; margin-top: 10px;">
                         <i class="fas fa-trash"></i> Remove
                     </button>
@@ -83,8 +83,8 @@ function updateSummary(cart) {
     const subtotalEl = document.getElementById('subtotal');
     const totalEl = document.getElementById('total');
     
-    if (subtotalEl) subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
-    if (totalEl) totalEl.textContent = `$${subtotal.toFixed(2)}`;
+    if (subtotalEl) subtotalEl.textContent = `PKR ${subtotal.toFixed(2)}`;
+    if (totalEl) totalEl.textContent = `PKR ${subtotal.toFixed(2)}`;
 }
 
 function checkout() {
@@ -144,10 +144,10 @@ function checkout() {
             </div>
             
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <button onclick="confirmCheckout()" style="flex: 1; min-width: 140px; padding: 12px; background: #8b7355; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; font-weight: 600;">
+                <button onclick="confirmCheckout()" style="flex: 1; min-width: 140px; padding: 12px; background: #8b7355; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem;">
                     Place Order
                 </button>
-                <button onclick="this.closest('div').parentElement.parentElement.remove()" style="flex: 1; min-width: 140px; padding: 12px; background: #ddd; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; font-weight: 600;">
+                <button onclick="this.closest('div').parentElement.parentElement.remove()" style="flex: 1; min-width: 140px; padding: 12px; background: #ddd; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem;">
                     Cancel
                 </button>
             </div>
